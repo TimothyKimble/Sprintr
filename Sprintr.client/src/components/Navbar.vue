@@ -1,11 +1,10 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center">
-        <img
-          alt="logo"
-          src="../assets/img/cw-logo.png"
-          height="45"
+  <nav class="row navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between">
+    <router-link class="col-md-2 navbar-brand d-flex" :to="{ name: 'Home' }">
+      <div class="d-flex flex-column align-items-center ">
+        <img class=" logoImg"
+             alt="logo"
+             src="../assets/img/duoEyeballs.png"
         />
       </div>
     </router-link>
@@ -20,19 +19,7 @@
     >
       <span class="navbar-toggler-icon" />
     </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <router-link :to="{ name: 'Home' }" class="nav-link">
-            Home
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link :to="{ name: 'About' }" class="nav-link">
-            About
-          </router-link>
-        </li>
-      </ul>
+    <div class=" col-md-3 collapse navbar-collapse" id="navbarText">
       <span class="navbar-text">
         <button
           class="btn btn-outline-primary text-uppercase"
@@ -47,13 +34,13 @@
             class="dropdown-toggle"
             @click="state.dropOpen = !state.dropOpen"
           >
+            <span class="mx-3">{{ user.name }}</span>
             <img
               :src="user.picture"
               alt="user photo"
               height="40"
               class="rounded"
             />
-            <span class="mx-3">{{ user.name }}</span>
           </div>
           <div
             class="dropdown-menu p-0 list-group w-100"
@@ -122,5 +109,9 @@ a:hover {
 }
 .nav-item .nav-link.router-link-exact-active{
   color: var(--primary);
+}
+.logoImg {
+  height: 7.5vh;
+  object-fit: auto;
 }
 </style>
