@@ -1,3 +1,4 @@
+
 <template>
   <div class="Home row w-100 m-0 d-flex justify-content-center">
     <div class="col-md-12 p-0 m-5 border border-dark shadow drop-shadow">
@@ -77,7 +78,7 @@
             <button type="button" class="btn btn-secondary" data-dismiss="modal">
               Close
             </button>
-            <button type="submit" class="btn btn-primary" data-dismiss="modal">
+            <button type="submit" class="btn btn-primary">
               Save
             </button>
           </form>
@@ -88,12 +89,14 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { reactive } from '@vue/reactivity'
 import { computed, onMounted } from '@vue/runtime-core'
 import { AppState } from '../AppState'
 import Pop from '../utils/Notifier'
 import { projectsService } from '../services/ProjectsService'
 import { useRouter } from 'vue-router'
+import { logger } from '../utils/Logger'
 
 export default {
   name: 'Home',
@@ -117,11 +120,13 @@ export default {
         try {
           state.createProject.creatorId = AppState.account.id
           const res = await projectsService.createProject(state.createProject)
-          router.push({ name: 'Project', params: { id: res.id } })
+          logger.log(res)
+          $('#projectModal').modal('hide')
+          router.push({ name: 'ProjectBacklog', params: { id: res } })
           state.createProject = {}
-          Pop.toast(res.data, 'success')
+          Pop.toast('You Made A Project!', 'success')
         } catch (error) {
-          Pop.toast('You done fucked up', 'error')
+          Pop.toast(error, 'error')
         }
       }
     }

@@ -25,8 +25,8 @@ class TasksService {
   }
 
   async destroy(id, userId) {
-    const foundTask = await this.getOne(id)
-    if (foundTask.creatorId === userId) {
+    const foundTask = await this.getOne(id, userId)
+    if (foundTask.creatorId.toString() === userId) {
       const task = await dbContext.Tasks.findByIdAndDelete(id)
       if (!task) {
         throw new BadRequest('invalid Id')
@@ -36,7 +36,7 @@ class TasksService {
 
   async edit(body) {
     const foundTask = await this.getOne(body.id)
-    if (foundTask.creatorId === body.creatorId) {
+    if (foundTask.creatorId.toString() === body.creatorId) {
       const task = await dbContext.Tasks.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
       if (!task) {
         throw new BadRequest('invalid Id')

@@ -25,8 +25,8 @@ class BacklogItemsService {
   }
 
   async destroy(id, userId) {
-    const foundbacklogItem = await this.getOne(id)
-    if (foundbacklogItem.creatorId === userId) {
+    const foundbacklogItem = await this.getOne(id, userId)
+    if (foundbacklogItem.creatorId.toString() === userId) {
       const backlogItem = await dbContext.BacklogItems.findByIdAndDelete(id)
       if (!backlogItem) {
         throw new BadRequest('invalid Id')
@@ -36,7 +36,7 @@ class BacklogItemsService {
 
   async edit(body) {
     const foundbacklogItem = await this.getOne(body.id)
-    if (foundbacklogItem.creatorId === body.creatorId) {
+    if (foundbacklogItem.creatorId.toString() === body.creatorId) {
       const backlogItem = await dbContext.BacklogItems.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
       if (!backlogItem) {
         throw new BadRequest('invalid Id')

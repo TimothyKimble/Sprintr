@@ -22,7 +22,7 @@
             <p>{{ state.createdAt.toLocaleString('en-US', 'short') }}</p>
           </div>
           <div class="col-md-1 col-3 p-0 d-flex align-items-end justify-content-center">
-            <button class="btn btn-danger w-100 roundedButton d-flex justify-content-center ">
+            <button @click="destroyProject" class="btn btn-danger w-100 roundedButton d-flex justify-content-center ">
               -
             </button>
           </div>
@@ -35,6 +35,9 @@
 <script>
 import { reactive } from '@vue/reactivity'
 import { logger } from '../utils/Logger'
+import Pop from '../utils/Notifier'
+import { projectsService } from '../services/ProjectsService'
+import { AppState } from '../AppState'
 
 export default {
   name: 'Project',
@@ -45,9 +48,20 @@ export default {
     const state = reactive({
       createdAt: new Date(props.project.createdAt)
     })
-    return { state }
-  },
-  components: {}
+    return {
+      state,
+      async destroyProject() {
+        try {
+          if (await Pop.confirm()) {
+            logger.log(AppState.user.id)
+            await projectsService.destroyProject(props.project.id)
+          }
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
+      }
+    }
+  }
 }
 </script>
 

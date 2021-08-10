@@ -6,6 +6,7 @@ export const BacklogItemSchema = new Schema({
   name: { type: String, required: true },
   isOpen: { type: Boolean, default: true },
   color: { type: String, required: true },
+  body: { type: String, required: true },
   projectId: { type: ObjectId, ref: 'Project', required: true },
   creatorId: { type: ObjectId, ref: 'Account', required: true }
 },

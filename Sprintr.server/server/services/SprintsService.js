@@ -25,8 +25,8 @@ class SprintsService {
   }
 
   async destroy(id, userId) {
-    const foundsprint = await this.getOne(id)
-    if (foundsprint.creatorId === userId) {
+    const foundsprint = await this.getOne(id, userId)
+    if (foundsprint.creatorId.toString() === userId) {
       const sprint = await dbContext.Sprints.findByIdAndDelete(id)
       if (!sprint) {
         throw new BadRequest('invalid Id')
@@ -36,7 +36,7 @@ class SprintsService {
 
   async edit(body) {
     const foundsprint = await this.getOne(body.id)
-    if (foundsprint.creatorId === body.creatorId) {
+    if (foundsprint.creatorId.toString() === body.creatorId) {
       const sprint = await dbContext.Sprints.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
       if (!sprint) {
         throw new BadRequest('invalid Id')

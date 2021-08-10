@@ -1,5 +1,6 @@
 import { dbContext } from '../db/DbContext'
 import { BadRequest, Forbidden } from '../utils/Errors'
+import { logger } from '../utils/Logger'
 
 class ProjectsService {
   async getAll(query = {}) {
@@ -25,18 +26,19 @@ class ProjectsService {
   }
 
   async destroy(id, userId) {
-    const foundproject = await this.getOne(id)
-    if (foundproject.creatorId === userId) {
-      const project = await dbContext.Projects.findByIdAndDelete(id)
-      if (!project) {
-        throw new BadRequest('invalid Id')
-      } return project
+    const foundproject = await this.getOne(id, userId)
+    logger.log('id:', id, 'userId:', userId)
+    if (foundproject.creatorId.toString() === userId) {
+      const project = await dbContext.Projects.findOneAndDelete(id)
+      return project
+    } else {
+      throw new Forbidden('This is not your project')
     }
   }
 
   async edit(body) {
     const foundproject = await this.getOne(body.id)
-    if (foundproject.creatorId === body.creatorId) {
+    if (foundproject.creatorId.toString() === body.creatorId) {
       const project = await dbContext.Projects.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
       if (!project) {
         throw new BadRequest('invalid Id')

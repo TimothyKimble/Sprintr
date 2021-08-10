@@ -25,8 +25,8 @@ class NotesService {
   }
 
   async destroy(id, userId) {
-    const foundNote = await this.getOne(id)
-    if (foundNote.creatorId === userId) {
+    const foundNote = await this.getOne(id, userId)
+    if (foundNote.creatorId.toString() === userId) {
       const note = await dbContext.Notes.findByIdAndDelete(id)
       if (!note) {
         throw new BadRequest('invalid Id')
