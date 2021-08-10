@@ -1,13 +1,13 @@
 <template>
   <nav class="row navbar navbar-expand-lg navbar-dark bg-dark d-flex justify-content-between">
-    <router-link class="col-md-2 navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center ">
+    <div class="d-flex flex-column align-items-center col-md-2 ">
+      <router-link class=" navbar-brand d-flex" :to="{ name: 'Home' }">
         <img class=" logoImg"
              alt="logo"
              src="../assets/img/duoEyeballs.png"
         />
-      </div>
-    </router-link>
+      </router-link>
+    </div>
     <button
       class="navbar-toggler"
       type="button"

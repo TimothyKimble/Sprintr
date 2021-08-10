@@ -1,14 +1,32 @@
 <template>
   <div class="project">
-    <div class="row m-0 d-flex mt-1 w-100 justify-content-between">
+    <div class="row m-0 d-flex mt-1 w-100 justify-content-between border-bottom border-dark my-5 align-items-center">
+      <router-link class="col-md-3 p-0"
+                   :to=" {name:
+                            'ProjectBacklog',
+                          params:
+                            {id:
+                              project.id}
+                   }"
+      >
+        <div class="p-1">
+          <p>{{ project.name }}</p>
+        </div>
+      </router-link>
       <div class="col-md-3 p-1">
-        <p>{{ project.name }}</p>
+        <img class="rounded-pill w-15" :src="project.creator.picture" alt="">
       </div>
       <div class="col-md-3 p-1">
-        <img class="rounded-pill w-50" :src="project.creator.picture" alt="">
-      </div>
-      <div class="col-md-3 p-1">
-        <p>{{ state.createdAt.toLocaleString('en-US', 'short') }}</p>
+        <div class="row w-100 m-0 d-flex justify-content-end h-100">
+          <div class="col-md-11 p-0">
+            <p>{{ state.createdAt.toLocaleString('en-US', 'short') }}</p>
+          </div>
+          <div class="col-md-1 col-3 p-0 d-flex align-items-end justify-content-center">
+            <button class="btn btn-danger w-100 roundedButton d-flex justify-content-center ">
+              -
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -34,5 +52,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.w-15 {
+  width: 15%;
+}
+.roundedButton {
+  border-radius: 50%;
+}
 </style>

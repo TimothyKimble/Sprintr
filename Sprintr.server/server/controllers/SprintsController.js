@@ -1,5 +1,6 @@
 import { Auth0Provider } from '@bcwdev/auth0provider'
 import { sprintsService } from '../services/SprintsService'
+import { tasksService } from '../services/TasksService'
 import BaseController from '../utils/BaseController'
 
 export class SprintsController extends BaseController {
@@ -9,6 +10,7 @@ export class SprintsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .get('', this.getAll)
       .get('/:id', this.getOne)
+      .get('/:id/tasks', this.getAllTasksIn)
       .post('', this.create)
       .put('/:id', this.edit)
       .delete('/:id', this.destroy)
@@ -27,6 +29,15 @@ export class SprintsController extends BaseController {
     try {
       const sprint = await sprintsService.getOne(req.params.id, req.userInfo.id)
       res.send(sprint)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getAllTasksIn(req, res, next) {
+    try {
+      const task = await tasksService.getAll({ sprintId: req.params.id })
+      res.send(task)
     } catch (error) {
       next(error)
     }

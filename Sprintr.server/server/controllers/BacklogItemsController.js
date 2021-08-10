@@ -1,5 +1,6 @@
 import { Auth0Provider } from '@bcwdev/auth0provider'
 import { backlogItemsService } from '../services/BacklogItemsService'
+import { tasksService } from '../services/TasksService'
 import BaseController from '../utils/BaseController'
 
 export class BacklogItemsController extends BaseController {
@@ -9,6 +10,7 @@ export class BacklogItemsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .get('', this.getAll)
       .get('/:id', this.getOne)
+      .get('/:id/tasks', this.getAllTasksIn)
       .post('', this.create)
       .put('/:id', this.edit)
       .delete('/:id', this.destroy)
@@ -27,6 +29,15 @@ export class BacklogItemsController extends BaseController {
     try {
       const backlogItem = await backlogItemsService.getOne(req.params.id, req.userInfo.id)
       res.send(backlogItem)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getAllTasksIn(req, res, next) {
+    try {
+      const task = await tasksService.getAll({ backlogItemId: req.params.id })
+      res.send(task)
     } catch (error) {
       next(error)
     }

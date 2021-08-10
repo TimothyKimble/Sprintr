@@ -1,14 +1,16 @@
 <template>
-  <div class="Home row w-100 m-0 d-flex">
-    <div class="col-md-8 p-0 m-5 border border-dark shadow drop-shadow">
+  <div class="Home row w-100 m-0 d-flex justify-content-center">
+    <div class="col-md-12 p-0 m-5 border border-dark shadow drop-shadow">
       <div class="row w-100 m-0 p-5">
         <div class="col-md-8 p-3">
           <h4>Projects</h4>
           <h6>A list of all Projects for {{ state.account.email }}</h6>
         </div>
-        <div class="col-md-2 p-0">
-          <button class="btn btn-success" data-toggle="modal" data-target="#projectModal">
-            <p>Create Project</p>
+        <div class="col-md-4 p-0 d-flex justify-content-center align-items-center">
+          <button class="btn btn-success roundedButton" data-toggle="modal" data-target="#projectModal">
+            <p class="m-0 p-0">
+              +
+            </p>
           </button>
         </div>
         <div class="col-md-12 p-0">
@@ -87,27 +89,35 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
-import { computed } from '@vue/runtime-core'
+import { computed, onMounted } from '@vue/runtime-core'
 import { AppState } from '../AppState'
 import Pop from '../utils/Notifier'
 import { projectsService } from '../services/ProjectsService'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'Home',
   setup() {
+    const router = useRouter()
     const state = reactive({
       projects: computed(() => AppState.projects),
       account: computed(() => AppState.account),
       createProject: {}
     })
-
+    onMounted(async() => {
+      try {
+        await projectsService.getAllProjects()
+      } catch (error) {
+        Pop.toast('Error Getting Project', 'error')
+      }
+    })
     return {
       state,
       async createProject() {
         try {
           state.createProject.creatorId = AppState.account.id
           const res = await projectsService.createProject(state.createProject)
-          // NOTE TO DO LATER  router.push({ name: 'ProjectPage', params: { id: res.id } })
+          router.push({ name: 'Project', params: { id: res.id } })
           state.createProject = {}
           Pop.toast(res.data, 'success')
         } catch (error) {
@@ -127,5 +137,9 @@ export default {
     height: 200px;
     width: 200px;
   }
+}
+
+.roundedButton {
+  border-radius: 50%;
 }
 </style>
