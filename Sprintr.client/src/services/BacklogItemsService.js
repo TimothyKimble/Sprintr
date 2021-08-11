@@ -9,6 +9,12 @@ class BacklogItemsService {
     AppState.projects = res.data
   }
 
+  async getAllTasksIn(id) {
+    logger.log(id)
+    const res = await api.get('api/backlogItems/' + id + '/tasks')
+    AppState.projects = res.data
+  }
+
   async createBacklogItem(rawBacklogItem) {
     const res = await api.post('api/backlogItems', rawBacklogItem)
     await projectsService.getAllBacklogItemsIn(rawBacklogItem.projectId)

@@ -21,6 +21,13 @@ class ProjectsService {
     AppState.backlogItems = res.data
   }
 
+  async getAllSprintsIn(id) {
+    const res = await api.get('api/projects/' + id + '/sprints')
+    logger.log('Responce from server Service:', res)
+    AppState.sprints = res.data
+    logger.log('Apstate in service value', AppState.sprints)
+  }
+
   // TODO do all deletes
   async destroyProject(id) {
     await api.delete('api/projects/' + id)

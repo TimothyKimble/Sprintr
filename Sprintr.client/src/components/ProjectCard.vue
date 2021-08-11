@@ -1,12 +1,12 @@
 <template>
   <div class="project">
-    <div class="row m-0 d-flex mt-1 w-100 justify-content-between border-bottom border-dark my-5 align-items-center">
+    <div class="row m-0 d-flex p-3 w-100 justify-content-between border-bottom border-dark my-4 align-items-center CardShadowing shrink">
       <router-link class="col-md-3 p-0"
-                   :to=" {name:
-                            'ProjectBacklog',
-                          params:
-                            {id:
-                              project.id}
+                   :to="{name:
+                           'ProjectBacklog',
+                         params:
+                           {id:
+                             project.id}
                    }"
       >
         <div class="p-1">
@@ -45,6 +45,7 @@ export default {
     project: { type: Object, required: true }
   },
   setup(props) {
+    logger.log('project id:', props.project.id)
     const state = reactive({
       createdAt: new Date(props.project.createdAt)
     })
@@ -71,5 +72,14 @@ export default {
 }
 .roundedButton {
   border-radius: 50%;
+}
+.CardShadowing {
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 20px, rgba(0, 0, 0, 0.22) 0px 5px 5px;
+}
+.shrink {
+transition: all .3s ease-in-out;
+}
+.shrink:hover {
+transform: scale(0.99);
 }
 </style>

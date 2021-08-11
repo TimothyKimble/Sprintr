@@ -18,11 +18,28 @@ const routes = [
     component: loadPage('AboutPage'),
     beforeEnter: authGuard
   },
+  // {
+  //   path: '/projects/:id/backlog',
+  //   name: 'ProjectBacklog',
+  //   component: loadPage('ProjectBacklogPage'),
+  //   beforeEnter: authGuard
+  // },
   {
-    path: '/projects/:id/backlog',
-    name: 'ProjectBacklog',
-    component: loadPage('ProjectBacklogPage'),
-    beforeEnter: authGuard
+    path: '/projects/:id/',
+    name: 'ProjectPage',
+    component: loadPage('ProjectsPage'),
+    beforeEnter: authGuard,
+    children: [{
+      path: 'backlog/',
+      name: 'ProjectBacklog',
+      component: loadPage('ProjectBacklogPage'),
+      beforeEnter: authGuard
+    }, {
+      path: 'sprint/:sprintId',
+      name: 'ProjectSprint',
+      component: loadPage('ProjectSprintPage'),
+      beforeEnter: authGuard
+    }]
   },
   {
     path: '/account',

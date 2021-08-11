@@ -15,6 +15,7 @@
           </button>
         </div>
         <div class="col-md-12 border-top border-dark">
+          <BacklogItemCard v-for="b in state.backlogItems" :key="b.id" :backlog-item="b" />
           <!-- eslint-disable-next-line vue/attribute-hyphenation -->
           <!-- <BacklogItemThread :backlogItem="state.backlogItems" /> -->
         </div>
@@ -115,6 +116,7 @@ export default {
       const router = useRoute()
       try {
         await projectsService.getAllBacklogItemsIn(router.params.id)
+        logger.log('sprints,', AppState.sprints)
       } catch (error) {
         Pop.toast('Error Get Backlog Item', 'error')
       }
@@ -151,5 +153,16 @@ export default {
 
 .roundedButton {
   border-radius: 50%;
+}
+
+.exampleBack {
+  background-color: red($color: #df1d1d);
+}
+
+.fa-weight-hanging {
+color: #6c1890
+}
+.weight-text {
+  color: #6c1890
 }
 </style>
