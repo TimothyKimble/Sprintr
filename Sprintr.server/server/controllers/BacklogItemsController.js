@@ -34,6 +34,9 @@ export class BacklogItemsController extends BaseController {
     }
   }
 
+  // FIXME REview this
+  // const res = await api.get('api/backlogItems/' + id + '/tasks')
+  // api/backlogItems/6112fc28add38226ec38d9f8/tasks
   async getAllTasksIn(req, res, next) {
     try {
       const task = await tasksService.getAll({ backlogItemId: req.params.id })

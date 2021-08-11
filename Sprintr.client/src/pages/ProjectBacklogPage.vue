@@ -116,7 +116,7 @@ export default {
       const router = useRoute()
       try {
         await projectsService.getAllBacklogItemsIn(router.params.id)
-        logger.log('sprints,', AppState.sprints)
+        logger.log('sprints in appstate Page,', AppState.sprints)
       } catch (error) {
         Pop.toast('Error Get Backlog Item', 'error')
       }
@@ -128,7 +128,7 @@ export default {
           state.createBacklogItem.creatorId = AppState.account.id
           state.createBacklogItem.projectId = router.params.id
           const res = await backlogItemsService.createBacklogItem(state.createBacklogItem)
-          logger.log(res)
+          // logger.log(res)
           $('#backlogItemModal').modal('hide')
           state.createBacklogItem = {}
           Pop.toast('You Made A Task!', 'success')

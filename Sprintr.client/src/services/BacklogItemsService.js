@@ -10,8 +10,9 @@ class BacklogItemsService {
   }
 
   async getAllTasksIn(id) {
-    logger.log(id)
+    logger.log('ID for the Backlog ITEML', id)
     const res = await api.get('api/backlogItems/' + id + '/tasks')
+    logger.log('res ITems', res)
     AppState.projects = res.data
   }
 

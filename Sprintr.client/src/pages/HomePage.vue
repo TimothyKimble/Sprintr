@@ -120,7 +120,7 @@ export default {
         try {
           state.createProject.creatorId = AppState.account.id
           const res = await projectsService.createProject(state.createProject)
-          logger.log(res)
+          // logger.log(res)
           $('#projectModal').modal('hide')
           router.push({ name: 'ProjectBacklog', params: { id: res } })
           state.createProject = {}

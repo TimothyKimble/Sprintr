@@ -1,20 +1,17 @@
 <template>
-  <div class="ProjectBacklogPage row w-100 m-0 d-flex justify-content-center bg-black">
+  <div class="ProjectBacklogPage row w-100 m-0 d-flex justify-content-center">
     <div class="col-md-12">
-      <div class="row">
-        <div class="col-md-3">
-          Backlog
-        </div>
+      <div class="row bg-dark text-light">
         <div class="col-md-3">
           <router-link :to="{name: 'ProjectBacklog', params: {id: router.params.id}}">
             Backlog
           </router-link>
         </div>
-        <!-- <div v-for="s in AppState.sprints" :key="s" class="col-md-3">
-          <router-link :to="{name: key.name, params: {id: router.params.id, sprintId: key.id}}">
-            {{ key.name }}
+        <div v-for="s in sprintsIn" :key="s" class="col-md-3">
+          <router-link :to="{name: 'ProjectSprint', params: {id: router.params.id, sprintId: s.id}}">
+            {{ s.name }}
           </router-link>
-        </div> -->
+        </div>
       </div>
       <router-view />
     </div>
@@ -39,8 +36,8 @@ export default {
     //   $('#backlogItemsModal').modal('show')
     // })
     const router = useRoute()
-    logger.log('router id:', router.params.id)
-    logger.log('router keys:', Object.keys(router.params))
+    // logger.log('router id:', router.params.id)
+    // logger.log('router keys:', Object.keys(router.params))
     const state = reactive({
       backlogItems: computed(() => AppState.backlogItems),
       createBacklogItem: {}
@@ -63,14 +60,15 @@ export default {
           state.createBacklogItem.creatorId = AppState.account.id
           state.createBacklogItem.projectId = router.params.id
           const res = await backlogItemsService.createBacklogItem(state.createBacklogItem)
-          logger.log(res)
+          // logger.log(res)
           $('#backlogItemModal').modal('hide')
           state.createBacklogItem = {}
           Pop.toast('You Made A Task!', 'success')
         } catch (error) {
           Pop.toast(error, 'error')
         }
-      }
+      },
+      sprintsIn: computed(() => AppState.sprints)
     }
   }
 }

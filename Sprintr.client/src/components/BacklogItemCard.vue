@@ -47,7 +47,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="createBacklogItem">
+          <form @submit.prevent="createTask">
             <div class="form-group">
               <label for="name">Task Name</label>
               <input type="text"
@@ -65,6 +65,14 @@
                      v-model="stateCreateTask.createTask.weight"
                      placeholder="0"
               >
+              <select v-model="stateCreateTask.createTask.sprintId" name="sprintName" id="sprintName">
+                <option v-for="s in sprintsIn" :key="s" :value="s.id">
+                  {{ s.name }}
+                </option>
+                <option selected value="">
+                  Unassigned
+                </option>
+              </select>
             </div>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">
               Close
@@ -80,11 +88,13 @@
 </template>
 
 <script>
+import $ from 'jquery'
 import { computed, onMounted, reactive } from '@vue/runtime-core'
 import Pop from '../utils/Notifier'
 import { backlogItemsService } from '../services/BacklogItemsService'
 import { AppState } from '../AppState'
 import { tasksService } from '../services/TasksService'
+import { logger } from '../utils/Logger'
 
 export default {
   name: 'BacklogItemCard',
@@ -117,7 +127,11 @@ export default {
           stateCreateTask.createTask.projectId = props.backlogItem.projectId
           await tasksService.createTask(stateCreateTask.createTask)
           await backlogItemsService.getAllTasksIn(props.backlogItem.id)
+          logger.log('taasks In:', AppState.tasks)
+          logger.log('stateCreateTask:', stateCreateTask.createTask)
           stateTasks.tasks = AppState.tasks
+          stateCreateTask.createTask = {}
+          $('#taskModal').modal('hide')
         } catch (error) {
           Pop.toast(error, 'error')
         }
@@ -136,7 +150,8 @@ export default {
           }
         })
         return summer + '/' + totalTasks
-      })
+      }),
+      sprintsIn: computed(() => AppState.sprints)
     }
   }
 }

@@ -17,7 +17,7 @@ class ProjectsService {
 
   async getAllBacklogItemsIn(id) {
     const res = await api.get('api/projects/' + id + '/backlogItems')
-    logger.log(res.data)
+    // logger.log(res.data)
     AppState.backlogItems = res.data
   }
 
@@ -31,7 +31,7 @@ class ProjectsService {
   // TODO do all deletes
   async destroyProject(id) {
     await api.delete('api/projects/' + id)
-    logger.log({ message: 'Delorted Project' })
+    // logger.log({ message: 'Delorted Project' })
     AppState.projects = AppState.projects.filter(p => p.id !== id)
   }
 }
