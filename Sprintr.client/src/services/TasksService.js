@@ -20,5 +20,13 @@ class TasksService {
     const res = await api.put('api/tasks/' + id, foundTask)
     return res.data
   }
+
+  async editTask(rawTask) {
+    await api.put('api/tasks/' + rawTask.id, rawTask)
+  }
+
+  async addNote(rawNote) {
+    await api.post('api/notes', rawNote)
+  }
 }
 export const tasksService = new TasksService()

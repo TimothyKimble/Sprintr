@@ -8,7 +8,7 @@
           <h6>Group your tasks into items for over-arching collections for better organization </h6>
           <div class="form-check">
             <label class="form-check-label">
-              <input v-model="state.sprint.isOpen"
+              <input v-model="sprint.isOpen"
                      type="checkbox"
                      class="form-check-input"
                      name="isOpen"
@@ -16,6 +16,11 @@
               >
               Is this Sprint Open
             </label>
+          </div>
+          <div class="row m-0 w-100">
+            <div class="col-md-12 p-0">
+              <TaskCard v-for="t in tasks" :key="t.id" :task="t" />
+            </div>
           </div>
         </div>
         <!-- <div class="col-md-4 p-0 d-flex justify-content-center align-items-center">
@@ -34,7 +39,7 @@
 
 <script>
 import { onMounted, ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { AppState } from '../AppState'
 import { sprintsService } from '../services/SprintsService'
 import Pop from '../utils/Notifier'
@@ -42,17 +47,19 @@ import { logger } from '../utils/Logger'
 
 export default {
   name: 'ProjectSprintPage',
-
+  router: useRouter(),
   setup() {
     const route = useRoute()
-    let tasks = ref([AppState.tasks])
-    logger.log('Route keys', Object.keys(route.params))
-    logger.log('router id', route.params.sprintId)
-    logger.log('Sprints in AppState', AppState.sprints)
+    const router = useRouter()
+    let tasks = ref(AppState.tasks)
+    // logger.log('Route keys', Object.keys(route.params))
+    // logger.log('router id', route.params.sprintId)
+    // logger.log('Sprints in AppState', AppState.sprints)
     onMounted(async() => {
       try {
         await sprintsService.getAllTasksIn(route.params.sprintId)
         tasks = AppState.tasks
+
         // logger.log('sprints in appstate Page,', AppState.sprints)
       } catch (error) {
         Pop.toast(error, 'error')
@@ -61,7 +68,26 @@ export default {
     return {
       tasks,
       route,
-      sprint: computed(() => AppState.sprints.find(s => s.id === route.params.sprintId + ''))
+      router,
+      sprint: computed(() => AppState.sprints.find(s => s.id === route.params.sprintId)),
+      //   logger.log('id', s.id)
+      //   logger.log('sprintId', route.params.sprintId)
+      //   if () {
+      //     return s
+      //   } else return false
+      // })
+
+      async removeSprint() {
+        try {
+          if (await Pop.confirm()) {
+            await sprintsService.removeSprint(route.params.sprintId)
+            Pop.toast('Deleted Sprint', 'success')
+            router.push({ name: 'ProjectBacklog', params: { id: route.params.id } })
+          }
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
+      }
     }
   }
 }

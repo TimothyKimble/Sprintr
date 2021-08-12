@@ -3,6 +3,9 @@
     <div class="col-md-12">
       <div class="row bg-dark text-light">
         <div class="col-md-3">
+          <button type="button" class="btn btn-primary" @click="destroyProject">
+            - Project
+          </button>
           <router-link :to="{name: 'ProjectBacklog', params: {id: router.params.id}}">
             Backlog
           </router-link>
@@ -87,7 +90,7 @@
 <script>
 import $ from 'jquery'
 import { computed, onMounted, reactive } from '@vue/runtime-core'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { projectsService } from '../services/ProjectsService'
 import { backlogItemsService } from '../services/BacklogItemsService'
 import { logger } from '../utils/Logger'
@@ -98,10 +101,12 @@ import { sprintsService } from '../services/SprintsService'
 export default {
   name: 'ProjectBacklogPage',
   router: useRoute(),
+  route: useRouter(),
   setup() {
     // $('#show').click(function() {
     //   $('#backlogItemsModal').modal('show')
     // })
+    const route = useRouter()
     const router = useRoute()
     // logger.log('router id:', router.params.id)
     // logger.log('router keys:', Object.keys(router.params))
@@ -123,6 +128,7 @@ export default {
     return {
       state,
       router,
+      route,
       async createSprint() {
         try {
           state.createSprint.creatorId = AppState.account.id
@@ -132,6 +138,17 @@ export default {
           $('#createSprint').modal('hide')
           state.createSprint = {}
           Pop.toast('You Made A Sprint!', 'success')
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
+      },
+      async destroyProject() {
+        try {
+          if (await Pop.confirm()) {
+            // logger.log(AppState.user.id)
+            await projectsService.destroyProject(router.params.id)
+            route.push({ name: 'Home' })
+          }
         } catch (error) {
           Pop.toast(error, 'error')
         }
