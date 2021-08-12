@@ -3,23 +3,41 @@ import { logger } from '../utils/Logger'
 import { convertToQuery } from '../utils/Query'
 import { api } from './AxiosService'
 import { projectsService } from './ProjectsService'
+import { tasksService } from './TasksService'
 class BacklogItemsService {
   async getAllBacklogItems(query = { creatorId: AppState.user.id }) {
     const res = await api.get('api/backlogItems' + convertToQuery(query))
-    AppState.projects = res.data
+    AppState.backlogItems = res.data
+    return res.data
   }
 
   async getAllTasksIn(id) {
-    logger.log('ID for the Backlog ITEML', id)
     const res = await api.get('api/backlogItems/' + id + '/tasks')
-    logger.log('res ITems', res)
-    AppState.projects = res.data
+    // logger.log('res ITems', res)
+    AppState.tasks = res.data
+    return res.data
   }
 
   async createBacklogItem(rawBacklogItem) {
     const res = await api.post('api/backlogItems', rawBacklogItem)
     await projectsService.getAllBacklogItemsIn(rawBacklogItem.projectId)
     return res.data
+  }
+
+  async removeTaskPerm(id) {
+    await tasksService.destroy(id)
+  }
+
+  async removeBacklogItem(id) {
+    await this.removeBacklogItemsTasks(id)
+    await api.delete('api/backlogItems/' + id)
+  }
+
+  async removeBacklogItemsTasks(id) {
+    const allTasks = await this.getAllTasksIn(id)
+    for (let i = 0; i < allTasks.length; i++) {
+      await tasksService.destroy(allTasks[i].id)
+    }
   }
 }
 

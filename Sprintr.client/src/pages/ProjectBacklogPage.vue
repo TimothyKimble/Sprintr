@@ -15,9 +15,8 @@
           </button>
         </div>
         <div class="col-md-12 border-top border-dark">
-          <BacklogItemCard v-for="b in state.backlogItems" :key="b.id" :backlog-item="b" />
           <!-- eslint-disable-next-line vue/attribute-hyphenation -->
-          <!-- <BacklogItemThread :backlogItem="state.backlogItems" /> -->
+          <BacklogItemCard v-for="b in state.backlogItems" :key="b.id" :backlogItem="b" />
         </div>
       </div>
     </div>
@@ -109,14 +108,18 @@ export default {
     // })
     const router = useRoute()
     const state = reactive({
-      backlogItems: computed(() => AppState.backlogItems),
+      backlogItems: computed(() => {
+        logger.log('BackLogITems:', AppState.backlogItems)
+        return AppState.backlogItems
+      }),
       createBacklogItem: {}
     })
+
     onMounted(async() => {
       const router = useRoute()
       try {
-        await projectsService.getAllBacklogItemsIn(router.params.id)
-        logger.log('sprints in appstate Page,', AppState.sprints)
+        // await projectsService.getAllBacklogItemsIn(router.params.id)
+        // logger.log('sprints in appstate Page,', AppState.sprints)
       } catch (error) {
         Pop.toast('Error Get Backlog Item', 'error')
       }

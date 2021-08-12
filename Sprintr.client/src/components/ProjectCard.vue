@@ -45,7 +45,7 @@ export default {
     project: { type: Object, required: true }
   },
   setup(props) {
-    logger.log('project id:', props.project.id)
+    // logger.log('project id:', props.project.id)
     const state = reactive({
       createdAt: new Date(props.project.createdAt)
     })
@@ -54,7 +54,7 @@ export default {
       async destroyProject() {
         try {
           if (await Pop.confirm()) {
-            logger.log(AppState.user.id)
+            // logger.log(AppState.user.id)
             await projectsService.destroyProject(props.project.id)
           }
         } catch (error) {

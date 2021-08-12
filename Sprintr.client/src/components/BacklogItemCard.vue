@@ -20,17 +20,20 @@
     <div class="col-md-4 p-2 d-flex align-items-center">
       <div class="row w-100 m-0 d-flex align-items-center ">
         <div class="col-12 p-0 d-flex align-items-center justify-content-between">
-          <button class="btn btn-outline-warning " data-toggle="modal" data-target="#taskModal">
+          <button class="btn btn-outline-warning " data-toggle="modal" :data-target="'#taskModal'+backlogItem.id">
             Task +
           </button>
           <h5><span>{{ taskComplete }}</span> Tasks Complete</h5>
+          <button class="btn btn-outline-warning " @click="removeBacklogItem">
+            -
+          </button>
         </div>
       </div>
     </div>
   </div>
   <!-- Modal -->
   <div class="modal fade"
-       id="taskModal"
+       :id="'taskModal'+backlogItem.id"
        tabindex="-1"
        role="dialog"
        aria-labelledby="modelTitleId"
@@ -69,9 +72,6 @@
                 <option v-for="s in sprintsIn" :key="s" :value="s.id">
                   {{ s.name }}
                 </option>
-                <option selected value="">
-                  Unassigned
-                </option>
               </select>
             </div>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -89,7 +89,7 @@
 
 <script>
 import $ from 'jquery'
-import { computed, onMounted, reactive } from '@vue/runtime-core'
+import { computed, onMounted, reactive, ref } from '@vue/runtime-core'
 import Pop from '../utils/Notifier'
 import { backlogItemsService } from '../services/BacklogItemsService'
 import { AppState } from '../AppState'
@@ -105,53 +105,65 @@ export default {
     }
   },
   setup(props) {
+    // REVIEW YOU SHOULD HAVE KNOW REFS YOU SIMPLETON
+    const tasks = ref([AppState.tasks])
+
     onMounted(async() => {
       try {
         await backlogItemsService.getAllTasksIn(props.backlogItem.id)
+        // logger.log('This is the Mount Tasks', AppState.tasks)
+        tasks.value = [...AppState.tasks]
+        // logger.log('This is the State Tasks in mount', tasks.value)
       } catch (error) {
         Pop.toast(error, 'error')
       }
     })
-    const stateTasks = {
-      tasks: AppState.tasks
-    }
+
+    // logger.log('This is the Setup Tasks', tasks.value)
     const stateCreateTask = reactive({
       createTask: {}
     })
+    // logger.log('End of Card Setup: pop value', props.backlogItem)
     return {
-      stateTasks,
+      props,
+      tasks,
       stateCreateTask,
       async createTask() {
         try {
-          stateCreateTask.createTask.creatorId = AppState.account.id
           stateCreateTask.createTask.projectId = props.backlogItem.projectId
+          stateCreateTask.createTask.creatorId = AppState.account.id
+          // logger.log('BacklogItem id in use', props.backlogItem.id)
+          stateCreateTask.createTask.backlogItemId = props.backlogItem.id
+          stateCreateTask.createTask.weight = parseInt(stateCreateTask.createTask.weight)
           await tasksService.createTask(stateCreateTask.createTask)
           await backlogItemsService.getAllTasksIn(props.backlogItem.id)
-          logger.log('taasks In:', AppState.tasks)
-          logger.log('stateCreateTask:', stateCreateTask.createTask)
-          stateTasks.tasks = AppState.tasks
+          tasks.value = AppState.tasks
           stateCreateTask.createTask = {}
-          $('#taskModal').modal('hide')
+          $(('#taskModal' + props.backlogItem.id)).modal('hide')
         } catch (error) {
           Pop.toast(error, 'error')
         }
       },
       taskWeight: computed(() => {
         let summer = 0
-        stateTasks.tasks.forEach(t => (summer += t.weight))
+        tasks.value.forEach(t => (summer += parseInt(t.weight)))
         return summer
       }),
       taskComplete: computed(() => {
-        const totalTasks = stateTasks.tasks.length
+        const totalTasks = tasks.value.length
         let summer = 0
-        stateTasks.tasks.forEach(t => {
-          if (!t.isOpen) {
-            summer++
-          }
-        })
+        tasks.value.forEach(t => summer++)
         return summer + '/' + totalTasks
       }),
-      sprintsIn: computed(() => AppState.sprints)
+      sprintsIn: computed(() => AppState.sprints),
+      async removeBacklogItem() {
+        try {
+          await backlogItemsService.removeBacklogItem(props.backlogItem.id)
+          Pop.toast('Deleted BacklogItem', 'success')
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
+      }
     }
   }
 }
