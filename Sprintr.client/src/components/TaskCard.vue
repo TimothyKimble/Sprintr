@@ -15,134 +15,148 @@
         </div>
       </div>
     </div>
-    <div class="col-md- p-2 d-flex align-items-center">
+    <div class="col-md-4 -2 d-flex align-items-center">
       <div class="row w-100 m-0 d-flex align-items-center ">
-        <div class="col-12 p-0 d-flex align-items-center justify-content-between">
+        <div class="col-12 p-0 d-flex align-items-center justify-content-around">
           <button class="btn btn-outline-warning " data-toggle="modal" :data-target="'#edit'+task.id">
             Edit
           </button>
           <button class="btn btn-outline-success " data-toggle="modal" :data-target="'#note'+task.id">
-            Task +
+            Note +
           </button>
           <button class="btn btn-outline-warning " @click="removeTask">
             -
           </button>
         </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Edits -->
-  <div class="modal fade"
-       :id="'edit'+task.id"
-       tabindex="-1"
-       role="dialog"
-       aria-labelledby="modelTitleId"
-       aria-hidden="true"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Edit Task
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <div class="col-md-12">
+          <button class="btn btn-outline-success " data-toggle="collapse" :data-target="'#seeNote'+task.id">
+            All Notes
           </button>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="editTask">
-            <div class="form-group">
-              <label :for="'name'+task.id" class="">Name </label>
-              <input class="mb-2 ml-2"
-                     type="string"
-                     :name="'name'+task.id"
-                     :id="'name'+task.id"
-                     placeholder="0"
-                     required
-                     v-model="editCard.name"
-              >
-              <label :for="'weight'+task.id" class="">Weight </label>
-              <input class="mb-2 ml-2"
-                     type="number"
-                     :name="'weight'+task.id"
-                     :id="'weight'+task.id"
-                     placeholder="0"
-                     required
-                     v-model="editCard.weight"
-              >
-              <label :for="'sprintId'+task.id">Task for Sprint:   </label>
-              <select v-model="editCard.sprintId" :name="'sprintId'+task.id" :id="'sprintId'+task.id">
-                <option value="unassigned">
-                  unassigned
-                </option>
-                <option v-for="s in sprintsIn" :key="s" :value="s.id">
-                  {{ s.name }}
-                </option>
-              </select>
-              <select v-model="editCard.status" :name="'tastStatue'+task.id" :id="'tastStatue'+task.id">
-                <option v-if="editCard.status !== 'pending'" value="pending">
-                  pending
-                </option>
-                <option v-if="editCard.status !== 'in-progress'" value="in-progress">
-                  in-progress
-                </option>
-                <option v-if="editCard.status !== 'review'" value="review">
-                  review
-                </option>
-                <option v-if="editCard.status !== 'done'" value="done">
-                  done
-                </option>
-              </select>
-              <label :for="'tastStatue'+task.id">currentStatus: {{ editCard.status }}</label>
-            </div>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-              Close
-            </button>
-            <button type="submit" class="btn btn-primary">
-              Save
-            </button>
-          </form>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Modal for Notes -->
-  <div class="modal fade"
-       :id="'note'+task.id"
-       tabindex="-1"
-       role="dialog"
-       aria-labelledby="modelTitleId"
-       aria-hidden="true"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Add Note
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+    <div class="col-md-12 p-0 collapse" :id="'seeNote'+task.id">
+      <!-- TODO add note creator info -->
+      <div v-for="n in notesIn" :key="n" class="row">
+        <div class="col-md-12">
+          <p><b>By: {{ n.creator.name }}</b></p>
+          <p>Comment: {{ n.body }}</p>
         </div>
-        <div class="modal-body">
-          <form @submit.prevent="addNote">
-            <div class="form-group">
-              <label for="body">Body</label>
-              <input type="text"
-                     v-model="state.createNote.body"
-                     placeholder="Name..."
-                     id="name"
-                     name="name"
-                     class="form-control"
-              >
-            </div>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-              Close
+      </div>
+    </div>
+    <!-- Modal for Edits -->
+    <div class="modal fade"
+         :id="'edit'+task.id"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="modelTitleId"
+         aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Edit Task
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
-            <button type="submit" class="btn btn-primary">
-              Add
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="editTask">
+              <div class="form-group">
+                <label :for="'name'+task.id" class="">Name </label>
+                <input class="mb-2 ml-2"
+                       type="string"
+                       :name="'name'+task.id"
+                       :id="'name'+task.id"
+                       placeholder="0"
+                       required
+                       v-model="editCard.name"
+                >
+                <label :for="'weight'+task.id" class="">Weight </label>
+                <input class="mb-2 ml-2"
+                       type="number"
+                       :name="'weight'+task.id"
+                       :id="'weight'+task.id"
+                       placeholder="0"
+                       required
+                       v-model="editCard.weight"
+                >
+                <label :for="'sprintId'+task.id">Task for Sprint:   </label>
+                <select v-model="editCard.sprintId" :name="'sprintId'+task.id" :id="'sprintId'+task.id">
+                  <option value="unassigned">
+                    unassigned
+                  </option>
+                  <option v-for="s in sprintsIn" :key="s" :value="s.id">
+                    {{ s.name }}
+                  </option>
+                </select>
+                <select v-model="editCard.status" :name="'tastStatue'+task.id" :id="'tastStatue'+task.id">
+                  <option v-if="editCard.status !== 'pending'" value="pending">
+                    pending
+                  </option>
+                  <option v-if="editCard.status !== 'in-progress'" value="in-progress">
+                    in-progress
+                  </option>
+                  <option v-if="editCard.status !== 'review'" value="review">
+                    review
+                  </option>
+                  <option v-if="editCard.status !== 'done'" value="done">
+                    done
+                  </option>
+                </select>
+                <label :for="'tastStatue'+task.id">currentStatus: {{ editCard.status }}</label>
+              </div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal for Notes -->
+    <div class="modal fade"
+         :id="'note'+task.id"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="modelTitleId"
+         aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Add Note
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
             </button>
-          </form>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="addNote">
+              <div class="form-group">
+                <label for="body">Body</label>
+                <input type="text"
+                       v-model="state.createNote.body"
+                       placeholder="Name..."
+                       id="name"
+                       name="name"
+                       class="form-control"
+                >
+              </div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Add
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -172,6 +186,7 @@ export default {
     onMounted(async() => {
       try {
         AppState.taskCopy = { ...props.task }
+        await tasksService.getNotesIn(props.task.id)
         // logger.log('What is my prop,', props.task)
         // logger.log('What is my Appstate Copy,', AppState.taskCopy)
         // logger.log('What is my Edit Copy,', editCard)
@@ -241,7 +256,8 @@ export default {
           Pop.toast(error, 'error')
         }
       },
-      sprintsIn: computed(() => AppState.sprints)
+      sprintsIn: computed(() => AppState.sprints),
+      notesIn: computed(() => AppState.notes)
 
     }
   }
@@ -250,5 +266,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.shrink {
+transition: all .3s ease-in-out;
+}
+.shrink:hover {
+transform: scale(0.99);
+}
+
+.fa-weight-hanging {
+color: #9bf709
+}
+.weight-text {
+  color: #9bf709
+}
 
 </style>

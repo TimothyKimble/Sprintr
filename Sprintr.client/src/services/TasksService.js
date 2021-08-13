@@ -33,8 +33,8 @@ class TasksService {
     await api.post('api/notes', rawNote)
   }
 
-  async getNotesIn(query) {
-    const res = await api.get('api/notes', query)
+  async getNotesIn(id) {
+    const res = await api.get('api/tasks/' + id + '/notes')
     AppState.notes = res.data
     // NOTE will show all notes
     logger.log('AppState Notes:', AppState.notes)

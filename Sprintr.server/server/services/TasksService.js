@@ -38,10 +38,9 @@ class TasksService {
     const foundTask = await this.getOne(body.id, body.creatorId)
     // FIXME you shouldnt do this.
     if (foundTask.creatorId.toString() === body.creatorId) {
-      const task = await dbContext.Tasks.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
-      if (!task) {
-        throw new BadRequest('invalid Id')
-      } return task
+      await dbContext.Tasks.findByIdAndDelete(body.id)
+      await dbContext.Tasks.create(body)
+      // const task = await dbContext.Tasks.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@bcwdev/auth0provider'
+import { notesService } from '../services/NotesService'
 import { tasksService } from '../services/TasksService'
 import BaseController from '../utils/BaseController'
 
@@ -9,6 +10,7 @@ export class TasksController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .get('', this.getAll)
       .get('/:id', this.getOne)
+      .get('/:id/notes', this.getNotesIn)
       .post('', this.create)
       .put('/:id', this.edit)
       .delete('/:id', this.destroy)
@@ -27,6 +29,15 @@ export class TasksController extends BaseController {
     try {
       const task = await tasksService.getOne(req.params.id, req.userInfo.id)
       res.send(task)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getNotesIn(req, res, next) {
+    try {
+      const notes = await notesService.getAll({ taskId: req.params.id })
+      res.send(notes)
     } catch (error) {
       next(error)
     }

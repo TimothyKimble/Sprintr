@@ -9,7 +9,12 @@
               - Sprint
             </button>
           </div>
-
+          <div class="col-md-2 p-0 d-flex justify-content-around align-items-center">
+            <h5 class="weight-text p-0">
+              {{ totalWeight }}
+            </h5>
+            <i class="fas fa-weight-hanging fa-2x"></i>
+          </div>
           <p><b>{{ dateFormatter(sprint.startDate) + ' - ' + dateFormatter(sprint.endDate) }} </b></p>
           <h6>Group your tasks into items for over-arching collections for better organization </h6>
           <div class="form-check">
@@ -91,7 +96,13 @@ export default {
           Pop.toast(error, 'error')
         }
       },
-      tasks: computed(() => [...AppState.tasks])
+      tasks: computed(() => [...AppState.tasks]),
+      totalWeight: computed(() => {
+        let summer = 0
+        const task = [...AppState.tasks]
+        task.forEach(t => (summer += parseInt(t.weight)))
+        return summer
+      })
     }
   }
 }

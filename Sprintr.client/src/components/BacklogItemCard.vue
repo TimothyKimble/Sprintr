@@ -28,7 +28,20 @@
             -
           </button>
         </div>
+        <div class="col-md-12 p-0">
+          <button type="button"
+                  class="btn btn-outline-success"
+                  data-toggle="collapse"
+                  :data-target="'#expand'+backlogItem.id"
+                  :aria-controls="'expand'+backlogItem.id"
+          >
+            All Tasks
+          </button>
+        </div>
       </div>
+    </div>
+    <div class="col-md-12 collapse" :id="'expand'+backlogItem.id">
+      <TaskCard v-for="t in tasks" :key="t" :task="t" />
     </div>
   </div>
   <!-- Modal -->
