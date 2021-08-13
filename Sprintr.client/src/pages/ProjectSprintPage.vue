@@ -54,7 +54,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { AppState } from '../AppState'
 import { sprintsService } from '../services/SprintsService'
 import Pop from '../utils/Notifier'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 import { dateFormatter } from '../utils/DateFormat'
 import { projectsService } from '../services/ProjectsService'
 
@@ -65,9 +65,9 @@ export default {
     const router = useRouter()
     onMounted(async() => {
       try {
-        logger.log('Sprint to get task id:', route.params.sprintId)
+        // logger.log('Sprint to get task id:', route.params.sprintId)
         await sprintsService.getAllTasksIn(route.params.sprintId)
-        logger.log('Tasks in appstate Page,', AppState.tasks)
+        // logger.log('Tasks in appstate Page,', AppState.tasks)
       } catch (error) {
         Pop.toast(error, 'error')
       }

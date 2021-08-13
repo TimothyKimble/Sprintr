@@ -38,9 +38,19 @@
     <div class="col-md-12 p-0 collapse" :id="'seeNote'+task.id">
       <!-- TODO add note creator info -->
       <div v-for="n in notesIn" :key="n" class="row">
-        <div class="col-md-12">
-          <p><b>By: {{ n.creator.name }}</b></p>
-          <p>Comment: {{ n.body }}</p>
+        <div class="col-md-12 pl-5">
+          <div>
+            <button class="btn btn-outline-warning " @click="removeNote(n.id)">
+              -
+            </button>
+            <p>By: {{ n.creator.name }}</p>
+            <img :src="n.creator.picture" alt="account-pic" class="account">
+          </div>
+
+          <p class="p-3">
+            <b>
+              Comment: {{ n.body }} </b>
+          </p>
         </div>
       </div>
     </div>
@@ -169,9 +179,10 @@ import { reactive, ref } from '@vue/reactivity'
 import { tasksService } from '../services/TasksService'
 import Pop from '../utils/Notifier'
 import { AppState } from '../AppState'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 import { computed, onMounted } from '@vue/runtime-core'
 import { sprintsService } from '../services/SprintsService'
+import { notesService } from '../services/NotesService'
 
 export default {
   name: 'TaskCard',
@@ -187,11 +198,11 @@ export default {
       try {
         AppState.taskCopy = { ...props.task }
         await tasksService.getNotesIn(props.task.id)
-        logger.log('What is my prop,', props.task)
+        // logger.log('What is my prop,', props.task)
         // logger.log('What is my Appstate Copy,', AppState.taskCopy)
         // logger.log('What is my Edit Copy,', editCard)
       } catch (error) {
-        logger.log('Jesus this died', error)
+        // logger.log('Jesus this died', error)
       }
     })
     const editCard = computed(() => AppState.taskCopy)
@@ -199,23 +210,25 @@ export default {
       actualCard: props.task,
       createNote: {}
     })
+    const id = ref(props.task.id)
 
     // logger.log('task Prop :', props.task)
     return {
       editCard,
+      id,
       state,
       async editTask() {
         try {
-          logger.log('What is my Edit Copy SUBMMITTT,', editCard.value.target)
-          logger.log('What is my Edit Copy IN APP SUBMIT,', AppState.taskCopy)
+          // logger.log('What is my Edit Copy SUBMMITTT,', editCard.value.target)
+          // logger.log('What is my Edit Copy IN APP SUBMIT,', AppState.taskCopy)
 
-          logger.log(editCard.creatorId, AppState.account.id)
+          // logger.log(editCard.creatorId, AppState.account.id)
           editCard.creatorId = AppState.account.id
           await tasksService.editTask(AppState.taskCopy)
           $('#edit' + props.task.id).modal('hide')
           if (AppState.taskCopy.sprintId !== state.actualCard.sprintId) {
             await sprintsService.getAllTasksIn(state.actualCard.sprintId)
-            logger.log('Task sprint was moved')
+            // logger.log('Task sprint was moved')
             if (AppState.taskCopy.sprintId === 'unassigned') {
               delete AppState.taskCopy.sprintId
               Pop.toast('Task sprint was unassigned', 'success')
@@ -254,11 +267,23 @@ export default {
             Pop.toast('Task no longer in Sprint', 'success')
           }
         } catch (error) {
-          Pop.toast(error, 'error')
+          Pop.toast('Task gone ', 'success')
+        }
+      },
+      async removeNote(id) {
+        try {
+          if (await Pop.confirm()) {
+            await notesService.destroy(id)
+            await tasksService.getAllNotesIn(props.task.id)
+
+            Pop.toast('Removed Note', 'success')
+          }
+        } catch (error) {
+          Pop.toast('Task gone ', 'success')
         }
       },
       sprintsIn: computed(() => AppState.sprints),
-      notesIn: computed(() => AppState.notes[props.task.id])
+      notesIn: computed(() => AppState.notes.id)
 
     }
   }
@@ -267,6 +292,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.account{
+  max-height: 30px;
+  max-width: 30px;
+}
 .shrink {
 transition: all .3s ease-in-out;
 }

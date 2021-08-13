@@ -95,7 +95,7 @@ import { computed, onMounted, reactive } from '@vue/runtime-core'
 import { useRoute } from 'vue-router'
 import { projectsService } from '../services/ProjectsService'
 import { backlogItemsService } from '../services/BacklogItemsService'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 import Pop from '../utils/Notifier'
 import { AppState } from '../AppState'
 
@@ -109,7 +109,7 @@ export default {
     const router = useRoute()
     const state = reactive({
       backlogItems: computed(() => {
-        logger.log('BackLogITems:', AppState.backlogItems)
+        // logger.log('BackLogITems:', AppState.backlogItems)
         return AppState.backlogItems
       }),
       createBacklogItem: {}

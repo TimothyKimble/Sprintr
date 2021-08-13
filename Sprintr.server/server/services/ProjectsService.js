@@ -1,6 +1,6 @@
 import { dbContext } from '../db/DbContext'
 import { BadRequest, Forbidden } from '../utils/Errors'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 
 class ProjectsService {
   async getAll(query = {}) {
@@ -27,7 +27,7 @@ class ProjectsService {
 
   async destroy(id, userId) {
     const foundproject = await this.getOne(id, userId)
-    logger.log('id:', id, 'userId:', userId)
+    // logger.log('id:', id, 'userId:', userId)
     if (foundproject.creatorId.toString() === userId) {
       const project = await dbContext.Projects.findOneAndDelete(id)
       return project

@@ -96,7 +96,7 @@ import { AppState } from '../AppState'
 import Pop from '../utils/Notifier'
 import { projectsService } from '../services/ProjectsService'
 import { useRouter } from 'vue-router'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 
 export default {
   name: 'Home',

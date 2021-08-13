@@ -128,7 +128,7 @@ import Pop from '../utils/Notifier'
 import { backlogItemsService } from '../services/BacklogItemsService'
 import { AppState } from '../AppState'
 import { tasksService } from '../services/TasksService'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 
 export default {
   name: 'BacklogItemCard',

@@ -34,10 +34,10 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
-import { logger } from '../utils/Logger'
+// import { logger } from '../utils/Logger'
 import Pop from '../utils/Notifier'
 import { projectsService } from '../services/ProjectsService'
-import { AppState } from '../AppState'
+// import { AppState } from '../AppState'
 
 export default {
   name: 'Project',
