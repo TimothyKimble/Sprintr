@@ -35,7 +35,7 @@ class TasksService {
   }
 
   async edit(body) {
-    const foundTask = await this.getOne(body.id)
+    const foundTask = await this.getOne(body.id, body.creatorId)
     // FIXME you shouldnt do this.
     if (foundTask.creatorId.toString() === body.creatorId) {
       const task = await dbContext.Tasks.findByIdAndUpdate(body.id, body, { new: true, runValidators: true })
