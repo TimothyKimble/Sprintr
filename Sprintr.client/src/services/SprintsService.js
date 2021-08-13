@@ -24,7 +24,6 @@ class SprintsService {
     for (let i = 0; i < allTasks.length; i++) {
       await tasksService.removeSprintId(allTasks[i].id)
     }
-    await this.removeSprint(id)
   }
 
   async getAllTasksIn(id) {

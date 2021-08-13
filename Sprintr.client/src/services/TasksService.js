@@ -35,9 +35,9 @@ class TasksService {
 
   async getNotesIn(id) {
     const res = await api.get('api/tasks/' + id + '/notes')
-    AppState.notes = res.data
+    AppState.notes.id = res.data
     // NOTE will show all notes
-    logger.log('AppState Notes:', AppState.notes)
+    logger.log('AppState Notes:', AppState.notes.id)
   }
 }
 export const tasksService = new TasksService()
