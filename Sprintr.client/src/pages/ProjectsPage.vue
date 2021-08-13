@@ -6,7 +6,7 @@
           <button type="button" class="btn btn-primary" @click="destroyProject">
             - Project
           </button>
-          <router-link :to="{name: 'ProjectBacklog', params: {id: router.params.id}}">
+          <router-link :to="{name: 'ProjectBacklog', params: {id: route.params.id}}">
             Backlog
           </router-link>
         </div>
@@ -14,12 +14,12 @@
           +
         </button>
         <div v-for="s in sprintsIn" :key="s" class="col-md-3">
-          <router-link :to="{name: 'ProjectSprint', params: {id: router.params.id, sprintId: s.id}}">
+          <h5 @click="forceRerender(s)">
             {{ s.name }}
-          </router-link>
+          </h5>
         </div>
       </div>
-      <router-view />
+      <router-view :key="componentKey" />
     </div>
   </div>
 
@@ -92,7 +92,6 @@ import $ from 'jquery'
 import { computed, onMounted, reactive } from '@vue/runtime-core'
 import { useRoute, useRouter } from 'vue-router'
 import { projectsService } from '../services/ProjectsService'
-import { backlogItemsService } from '../services/BacklogItemsService'
 import { logger } from '../utils/Logger'
 import Pop from '../utils/Notifier'
 import { AppState } from '../AppState'
@@ -100,14 +99,31 @@ import { sprintsService } from '../services/SprintsService'
 
 export default {
   name: 'ProjectBacklogPage',
-  router: useRoute(),
-  route: useRouter(),
+  route: useRoute(),
+  router: useRouter(),
+  methods: {
+    async forceRerender(s) {
+      try {
+        // logger.log('key changeing', this.componentKey)
+        this.componentKey++
+        // logger.log('What is my appStateTask,', AppState.tasks)
+        // logger.log('What is my SPRINT ID Copy,', s.id)
+        this.$forceUpdate()
+        this.router.push({ name: 'ProjectSprint', params: { id: this.route.params.id, sprintId: s.id } })
+        // logger.log('What is my appStateTask AFTER PUSH,', AppState.tasks)
+      } catch (error) {
+        Pop.toast(error, 'error')
+      }
+    }
+  },
+
   setup() {
+    const componentKey = 0
     // $('#show').click(function() {
     //   $('#backlogItemsModal').modal('show')
     // })
-    const route = useRouter()
-    const router = useRoute()
+    const router = useRouter()
+    const route = useRoute()
     // logger.log('router id:', router.params.id)
     // logger.log('router keys:', Object.keys(router.params))
     const state = reactive({
@@ -115,12 +131,12 @@ export default {
       createSprint: {}
     })
     onMounted(async() => {
-      const router = useRoute()
+      const route = useRoute()
       try {
-        const res = await projectsService.getAllSprintsIn(router.params.id)
-        await projectsService.getAllBacklogItemsIn(router.params.id)
-        // logger.log('This is the sprint responce,', res)
-        // logger.log('Apstate Sprints:', AppState.sprints)
+        const res = await projectsService.getAllSprintsIn(route.params.id)
+        await projectsService.getAllBacklogItemsIn(route.params.id)
+      // logger.log('This is the sprint responce,', res)
+      // logger.log('Apstate Sprints:', AppState.sprints)
       } catch (error) {
         Pop.toast('Error Get Sprint in Poject Item', 'error')
       }
@@ -129,10 +145,11 @@ export default {
       state,
       router,
       route,
+      componentKey,
       async createSprint() {
         try {
           state.createSprint.creatorId = AppState.account.id
-          state.createSprint.projectId = router.params.id
+          state.createSprint.projectId = route.params.id
           const res = await sprintsService.createSprint(state.createSprint)
           // logger.log(res)
           $('#createSprint').modal('hide')
@@ -145,9 +162,9 @@ export default {
       async destroyProject() {
         try {
           if (await Pop.confirm()) {
-            // logger.log(AppState.user.id)
-            await projectsService.destroyProject(router.params.id)
-            route.push({ name: 'Home' })
+          // logger.log(AppState.user.id)
+            await projectsService.destroyProject(route.params.id)
+            router.push({ name: 'Home' })
           }
         } catch (error) {
           Pop.toast(error, 'error')

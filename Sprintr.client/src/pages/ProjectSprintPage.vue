@@ -4,7 +4,7 @@
       <div class="row w-100 m-0 p-5">
         <div class="col-md-8 p-3">
           <h4>{{ sprint.name }}</h4>
-          <p><b>{{ sprint.startDate + ' - ' + sprint.endDate }} </b></p>
+          <p><b>{{ dateFormatter(sprint.startDate) + ' - ' + dateFormatter(sprint.endDate) }} </b></p>
           <h6>Group your tasks into items for over-arching collections for better organization </h6>
           <div class="form-check">
             <label class="form-check-label">
@@ -38,35 +38,30 @@
 </template>
 
 <script>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { AppState } from '../AppState'
 import { sprintsService } from '../services/SprintsService'
 import Pop from '../utils/Notifier'
 import { logger } from '../utils/Logger'
+import { dateFormatter } from '../utils/DateFormat'
 
 export default {
   name: 'ProjectSprintPage',
-  router: useRouter(),
   setup() {
     const route = useRoute()
     const router = useRouter()
-    let tasks = ref(AppState.tasks)
-    // logger.log('Route keys', Object.keys(route.params))
-    // logger.log('router id', route.params.sprintId)
-    // logger.log('Sprints in AppState', AppState.sprints)
     onMounted(async() => {
       try {
+        logger.log('Sprint to get task id:', route.params.sprintId)
         await sprintsService.getAllTasksIn(route.params.sprintId)
-        tasks = AppState.tasks
-
-        // logger.log('sprints in appstate Page,', AppState.sprints)
+        logger.log('Tasks in appstate Page,', AppState.tasks)
       } catch (error) {
         Pop.toast(error, 'error')
       }
     })
     return {
-      tasks,
+      dateFormatter,
       route,
       router,
       sprint: computed(() => AppState.sprints.find(s => s.id === route.params.sprintId)),
@@ -87,7 +82,8 @@ export default {
         } catch (error) {
           Pop.toast(error, 'error')
         }
-      }
+      },
+      tasks: computed(() => AppState.tasks)
     }
   }
 }

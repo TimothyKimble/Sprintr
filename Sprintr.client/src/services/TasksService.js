@@ -1,3 +1,4 @@
+import { AppState } from '../AppState'
 import { logger } from '../utils/Logger'
 import { api } from './AxiosService'
 class TasksService {
@@ -27,6 +28,13 @@ class TasksService {
 
   async addNote(rawNote) {
     await api.post('api/notes', rawNote)
+  }
+
+  async getNotesIn(query) {
+    const res = await api.get('api/notes', query)
+    AppState.notes = res.data
+    // NOTE will show all notes
+    logger.log('AppState Notes:', AppState.notes)
   }
 }
 export const tasksService = new TasksService()

@@ -52,27 +52,48 @@
         <div class="modal-body">
           <form @submit.prevent="createTask">
             <div class="form-group">
-              <label for="name">Task Name</label>
+              <label :for="'name'+backlogItem.id">Task Name</label>
               <input type="text"
                      v-model="stateCreateTask.createTask.name"
                      placeholder="Name..."
-                     id="name"
-                     name="name"
+                     :id="'name'+backlogItem.id"
+                     :name="'name'+backlogItem.id"
                      class="form-control"
               >
-              <label for="weight" class="">Weight </label>
+              <label for="'weight'+backlogItem.id" class="">Weight </label>
               <input class="mb-2 ml-2"
                      type="number"
-                     name="weight"
-                     id="weight"
+                     :name="'weight'+backlogItem.id"
+                     :id="'weight'+backlogItem.id"
                      v-model="stateCreateTask.createTask.weight"
                      placeholder="0"
-              >
-              <select v-model="stateCreateTask.createTask.sprintId" name="sprintName" id="sprintName">
+              ><br>
+              <label :for="'sprintId'+backlogItem.id">Task for Sprint:   </label>
+              <select v-model="stateCreateTask.createTask.sprintId" :name="'sprintId'+backlogItem.id" :id="'sprintId'+backlogItem.id">
+                <option selected value="unassigned">
+                  unassigned
+                </option>
                 <option v-for="s in sprintsIn" :key="s" :value="s.id">
                   {{ s.name }}
                 </option>
               </select>
+              <br>
+              <label :for="'tastStatus'+backlogItem.id">Task Status:</label>
+              <select v-model="stateCreateTask.createTask.status" :name="'tastStatus'+backlogItem.id" id="'tastStatus'+backlogItem.id">
+                <option v-if="stateCreateTask.createTask.status !== 'pending'" value="pending">
+                  pending
+                </option>
+                <option v-if="stateCreateTask.createTask.status !== 'in-progress'" value="in-progress">
+                  in-progres
+                </option>
+                <option v-if="stateCreateTask.createTask.status !== 'review'" value="review">
+                  review
+                </option>
+                <option v-if="stateCreateTask.createTask.status !== 'done'" value="done">
+                  done
+                </option>
+              </select>
+              <label :for="'tastStatus'+backlogItem.id">currentStatus: {{ stateCreateTask.createTask.status }}</label>
             </div>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">
               Close
@@ -121,7 +142,9 @@ export default {
 
     // logger.log('This is the Setup Tasks', tasks.value)
     const stateCreateTask = reactive({
-      createTask: {}
+      createTask: {
+        status: 'pending'
+      }
     })
     // logger.log('End of Card Setup: pop value', props.backlogItem)
     return {
@@ -132,13 +155,18 @@ export default {
         try {
           stateCreateTask.createTask.projectId = props.backlogItem.projectId
           stateCreateTask.createTask.creatorId = AppState.account.id
+          if (stateCreateTask.createTask.sprintId === 'unassigned') {
+            delete stateCreateTask.createTask.sprintId
+          }
           // logger.log('BacklogItem id in use', props.backlogItem.id)
           stateCreateTask.createTask.backlogItemId = props.backlogItem.id
           stateCreateTask.createTask.weight = parseInt(stateCreateTask.createTask.weight)
           await tasksService.createTask(stateCreateTask.createTask)
           await backlogItemsService.getAllTasksIn(props.backlogItem.id)
           tasks.value = AppState.tasks
-          stateCreateTask.createTask = {}
+          stateCreateTask.createTask = {
+            status: 'pending'
+          }
           $(('#taskModal' + props.backlogItem.id)).modal('hide')
         } catch (error) {
           Pop.toast(error, 'error')
