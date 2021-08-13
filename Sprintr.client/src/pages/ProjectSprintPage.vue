@@ -3,7 +3,13 @@
     <div class="col-md-12 p-0 m-5 border border-dark shadow drop-shadow">
       <div class="row w-100 m-0 p-5">
         <div class="col-md-8 p-3">
-          <h4>{{ sprint.name }}</h4>
+          <div class="d-flex justify-content-between">
+            <h4>{{ sprint.name }}</h4>
+            <button type="button" class="btn btn-outline-danger" @Click="removeSprint">
+              - Sprint
+            </button>
+          </div>
+
           <p><b>{{ dateFormatter(sprint.startDate) + ' - ' + dateFormatter(sprint.endDate) }} </b></p>
           <h6>Group your tasks into items for over-arching collections for better organization </h6>
           <div class="form-check">
@@ -45,6 +51,7 @@ import { sprintsService } from '../services/SprintsService'
 import Pop from '../utils/Notifier'
 import { logger } from '../utils/Logger'
 import { dateFormatter } from '../utils/DateFormat'
+import { projectsService } from '../services/ProjectsService'
 
 export default {
   name: 'ProjectSprintPage',
@@ -77,13 +84,14 @@ export default {
           if (await Pop.confirm()) {
             await sprintsService.removeSprint(route.params.sprintId)
             Pop.toast('Deleted Sprint', 'success')
-            router.push({ name: 'ProjectBacklog', params: { id: route.params.id } })
+            router.push({ name: 'ProjectBacklog', params: { id: route.params.sprintId } })
+            projectsService.getAllSprintsIn(route.params.id)
           }
         } catch (error) {
           Pop.toast(error, 'error')
         }
       },
-      tasks: computed(() => AppState.tasks)
+      tasks: computed(() => [...AppState.tasks])
     }
   }
 }

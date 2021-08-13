@@ -170,7 +170,7 @@ export default {
           Pop.toast(error, 'error')
         }
       },
-      sprintsIn: computed(() => AppState.sprints)
+      sprintsIn: computed(() => [...AppState.sprints])
     }
   }
 }

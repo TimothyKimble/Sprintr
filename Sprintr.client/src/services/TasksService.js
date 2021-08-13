@@ -6,6 +6,7 @@ class TasksService {
     // logger.log(newTask)
     logger.log('api URL:', api.baseURL)
     const res = await api.post('api/tasks', newTask)
+    AppState.tasks.push(res.data)
     return res.data
   }
 

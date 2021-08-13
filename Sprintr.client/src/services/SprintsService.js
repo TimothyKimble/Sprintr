@@ -15,7 +15,7 @@ class SprintsService {
   }
 
   async removeSprint(id) {
-    await api.delete('api/sprints' + id)
+    await api.delete('api/sprints/' + id)
   }
 
   async removeSprintTasks(id) {
