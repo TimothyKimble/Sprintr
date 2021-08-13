@@ -14,9 +14,9 @@
           +
         </button>
         <div v-for="s in sprintsIn" :key="s" class="col-md-3">
-          <h5 @click="forceRerender(s)">
+          <router-link :to="{name: 'ProjectSprint', params: {id: route.params.id, sprintId: s.id}}" @click="forceRerender(s)">
             {{ s.name }}
-          </h5>
+          </router-link>
         </div>
       </div>
       <router-view :key="componentKey" />

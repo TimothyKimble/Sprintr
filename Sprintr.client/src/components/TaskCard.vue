@@ -24,7 +24,7 @@
           <button class="btn btn-outline-success " data-toggle="modal" :data-target="'#note'+task.id">
             Task +
           </button>
-          <button class="btn btn-outline-warning " @click="removetask">
+          <button class="btn btn-outline-warning " @click="removeTask">
             -
           </button>
         </div>
@@ -58,6 +58,7 @@
                      :name="'name'+task.id"
                      :id="'name'+task.id"
                      placeholder="0"
+                     required
                      v-model="editCard.name"
               >
               <label :for="'weight'+task.id" class="">Weight </label>
@@ -66,6 +67,7 @@
                      :name="'weight'+task.id"
                      :id="'weight'+task.id"
                      placeholder="0"
+                     required
                      v-model="editCard.weight"
               >
               <label :for="'sprintId'+task.id">Task for Sprint:   </label>
@@ -174,7 +176,7 @@ export default {
         // logger.log('What is my Appstate Copy,', AppState.taskCopy)
         // logger.log('What is my Edit Copy,', editCard)
       } catch (error) {
-        logger.log('JEsus this died', error)
+        logger.log('Jesus this died', error)
       }
     })
     const editCard = computed(() => AppState.taskCopy)
@@ -196,18 +198,18 @@ export default {
           logger.log(editCard.creatorId, AppState.account.id)
           editCard.creatorId = AppState.account.id
           await tasksService.editTask(AppState.taskCopy)
+          $('#edit' + props.task.id).modal('hide')
           if (AppState.taskCopy.sprintId !== state.actualCard.sprintId) {
             await sprintsService.getAllTasksIn(state.actualCard.sprintId)
             logger.log('Task sprint was moved')
             if (AppState.taskCopy.sprintId === 'unassigned') {
               delete AppState.taskCopy.sprintId
-              logger.log('Task sprintI was unassigned')
+              Pop.toast('Task sprint was unassigned', 'success')
             }
           }
           state.actualCard = editCard
           AppState.taskCopy = props.task
-          $('#edit' + props.task.ik).modal('hide')
-          Pop.toast('You edited your task', 'succes')
+          Pop.toast('You edited your task', 'success')
         } catch (error) {
           Pop.toast(error, 'error')
         }
@@ -217,11 +219,24 @@ export default {
           state.createNote.creatorId = AppState.account.id
           state.createNote.taskId = props.task
           await tasksService.addNote(state.createNote)
+          $('#note' + state.actualCard.task.id).modal('hide')
           // TODO right now this just returns all notes
           await tasksService.getNotesIn({ taskId: props.task.id })
           state.createNote = {}
-          $('#addNote').modal('hide')
-          Pop.toast('You edited your task', 'succes')
+
+          Pop.toast('You edited your task', 'success')
+        } catch (error) {
+          Pop.toast(error, 'error')
+        }
+      },
+      async removeTask() {
+        try {
+          state.createNote.creatorId = AppState.account.id
+          await tasksService.removeSprintId(props.task.id)
+          $('#edit' + props.task.id).modal('hide')
+          await sprintsService.getAllTasksIn(state.actualCard.sprintId)
+
+          Pop.toast('Task no longer in Sprint', 'success')
         } catch (error) {
           Pop.toast(error, 'error')
         }

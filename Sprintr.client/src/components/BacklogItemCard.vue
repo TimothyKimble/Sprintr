@@ -155,9 +155,6 @@ export default {
         try {
           stateCreateTask.createTask.projectId = props.backlogItem.projectId
           stateCreateTask.createTask.creatorId = AppState.account.id
-          if (stateCreateTask.createTask.sprintId === 'unassigned') {
-            delete stateCreateTask.createTask.sprintId
-          }
           // logger.log('BacklogItem id in use', props.backlogItem.id)
           stateCreateTask.createTask.backlogItemId = props.backlogItem.id
           stateCreateTask.createTask.weight = parseInt(stateCreateTask.createTask.weight)

@@ -18,7 +18,9 @@ class TasksService {
   async removeSprintId(id) {
     const foundTask = api.get('api/tasks/' + id)
     delete foundTask.sprintId
+    logger.log('Found Task', foundTask)
     const res = await api.put('api/tasks/' + id, foundTask)
+    AppState.tasks = AppState.tasks.filter(t => t.id !== id)
     return res.data
   }
 
